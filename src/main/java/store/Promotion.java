@@ -61,16 +61,16 @@ public class Promotion {
     }
 
     /// 오늘이 프로모션 기간에 해당하는지 여부
-    public Boolean checkActivate (Date startDate, Date endDate) {
+    public boolean checkActivate (Date startDate, Date endDate) {
 
         Date today = new Date();
         return startDate.compareTo(today) <= 0 && endDate.compareTo(today) >= 0;
-
 
     }
 
     private void validate(String details){
         //Todo: 예외처리 기능 구현
+
     }
 
 
