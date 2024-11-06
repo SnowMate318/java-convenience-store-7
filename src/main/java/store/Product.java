@@ -11,6 +11,9 @@ public class Product {
 
     static final private String ERROR_NOT_PARSE_PRICE = "[ERROR] 가격 정보는 숫자로 되어있습니다.";
     static final private String ERROR_NOT_PARSE_COUNT = "[ERROR] 물품 갯수 정보는 숫자로 되어있습니다.";
+
+
+
     static final private String ERROR_NOT_IN_RANGE_PRICE = "[ERROR] 범위에 맞는 가격을 설정해야 합니다.";
     static final private String ERROR_NOT_IN_RANGE_PRODUCT_COUNT = "[ERROR] 범위에 맞는 물품 갯수를 설정해야 합니다.";
 

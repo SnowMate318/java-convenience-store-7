@@ -33,5 +33,9 @@ public class PromotionValidator {
 
     }
 
+    public void validateInRangeInteger(int current, int minRange, int maxRange) {
+
+    }
+
 
 }
