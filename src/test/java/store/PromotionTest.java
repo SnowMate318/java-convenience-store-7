@@ -24,17 +24,19 @@ public class PromotionTest {
 
         PromotionValidator promotionValidator = new PromotionValidator();
 
-
-        static final private String ERROR_TEXT = "[ERROR]";
-
         @Test
         void 프로모션_이름이_비어있으면_안된다() {
 
             String noPromotionName = "";
-            String tooLongPromotionName = "morethan50morethan50morethan50morethan50morethan51m";
 
             assertThatThrownBy(()->promotionValidator.validateNameLength(noPromotionName))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        void 프로모션_이름이_50자를_넘지_않아야_한다() {
+
+            String tooLongPromotionName = "morethan50morethan50morethan50morethan50morethan51m";
 
             assertThatThrownBy(()->promotionValidator.validateNameLength(tooLongPromotionName))
                     .isInstanceOf(IllegalArgumentException.class);
@@ -44,7 +46,7 @@ public class PromotionTest {
         void 다섯_개의_정보가_쉼표로_구분되어야_한다() {
 
             String[] fourInfos = "MD추천상품,1,1,2024-01-01".split(",");
-            String[] sixInfos = " ,1,1,2024-11-01,2024-12-31,wrong".split(",");
+            String[] sixInfos = " MD추천상품,1,1,2024-11-01,2024-12-31,wrong".split(",");
             int arrayLength = 5;
 
             assertThatThrownBy(() -> promotionValidator.validateArrayLength(fourInfos,arrayLength))
@@ -66,6 +68,26 @@ public class PromotionTest {
         }
 
         @Test
+        void 구매물품_갯수는_최소_1개_이상이여야_한다() {
+
+            String buyUnder0 = "MD추천상품,0,1,2024-01-01,2024-12-31";
+
+            assertThatThrownBy(() -> new Promotion(buyUnder0))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+        }
+
+        @Test
+        void 구매물품_갯수는_최대_100개_이하여야_한다() {
+
+            String buyOver100 = "MD추천상품,101,1,2024-01-01,2024-12-31";
+
+            assertThatThrownBy(() -> new Promotion(buyOver100))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+        }
+
+        @Test
         void 증정물품_갯수는_숫자로_되어있어야_한다() {
 
             String wrongGet = "MD추천상품,1,root,2024-01-01,2024-12-31";
@@ -75,12 +97,31 @@ public class PromotionTest {
 
         }
 
+        @Test
+        void 증정물품_갯수는_최소_1개_이상이여야_한다() {
+
+            String getUnder0 = "MD추천상품,1,0,2024-01-01,2024-12-31";
+
+            assertThatThrownBy(() -> new Promotion(getUnder0))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+        }
+
+        @Test
+        void 증정물품_갯수는_최대_100개_이하여야_한다() {
+
+            String getOver100 = "MD추천상품,1,101,2024-01-01,2024-12-31";
+
+            assertThatThrownBy(() -> new Promotion(getOver100))
+                    .isInstanceOf(IllegalArgumentException.class);
+
+        }
+
 
         @Test
         void 프로모션_시작일은_날짜로_되어있어야_한다() {
 
             String wrongStartDate = "MD추천상품,1,1,root,2024-12-31";
-            String wrongEndDate = "MD추천상품,1,1,2024-01-01,root";
 
             assertThatThrownBy(() -> new Promotion(wrongStartDate))
                     .isInstanceOf(IllegalArgumentException.class);
