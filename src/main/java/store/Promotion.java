@@ -3,12 +3,9 @@ package store;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 public class Promotion {
 
-    static final private int ARRAY_LENGTH = 5;
 
     static final private int INDEX_PROMOTION_NAME = 0;
     static final private int INDEX_BUY = 1;
@@ -16,7 +13,8 @@ public class Promotion {
     static final private int INDEX_START_DATE = 3;
     static final private int INDEX_END_DATE = 4;
 
-    static final private String ERROR_NOT_MATCH_ARRAY_LENGTH = "[ERROR] 올바르지 않은 정보 수입니다.";
+    static final private int ARRAY_LENGTH = 5;
+
     static final private String ERROR_NOT_PARSE_BUY = "[ERROR] 물품 갯수 정보는 숫자로 되어있어야 합니다.";
     static final private String ERROR_NOT_PARSE_DATE = "[ERROR] 파일로부터 날짜 정보를 가져오지 못했습니다.";
 
@@ -28,46 +26,67 @@ public class Promotion {
     private boolean isActivate;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    private final PromotionValidator validator = new PromotionValidator();
 
     /// 문자열 형태로 되어있는 프로모션 정보를 처리한 후 저장
-    Promotion(String details){
+    Promotion(String details) {
+
         details = details.trim();
-        String[] promitionInfos = details.split(",");
-        validateArrayLength(promitionInfos);
-        setPromotions(promitionInfos);
+        String[] promotionsInfo = details.split(",");
+        validator.validateArrayLength(promotionsInfo, ARRAY_LENGTH);
+        setPromotions(promotionsInfo);
+        validator.validateDate(startDate, endDate);
+
     }
 
     ///
-    private void setPromotions(String[] promitionInfos) {
+    private void setPromotions(String[] promotionsInfo) {
 
-        setPromotionName(promitionInfos);
-        setBuy(promitionInfos);
-        setGet(promitionInfos);
-        setStartDate(promitionInfos);
-        setEndDate(promitionInfos);
-        setIsActivate(checkActivate(startDate,endDate));
+        setPromotionName(promotionsInfo);
+        setBuy(promotionsInfo);
+        setGet(promotionsInfo);
+        setStartDate(promotionsInfo);
+        setEndDate(promotionsInfo);
+        setIsActivate(checkActivate(startDate, endDate));
     }
 
-    private void setPromotionName (String[] promitionInfos) {
+    /// 프로모션 이름 저장
+    private void setPromotionName(String[] promotionsInfo) {
 
-        this.promotionName = promitionInfos[INDEX_PROMOTION_NAME].trim();
-        validatePromotionName(this.promotionName);
+        this.promotionName = promotionsInfo[INDEX_PROMOTION_NAME].trim();
+        validator.validatePromotionName(this.promotionName);
     }
 
-    public void validatePromotionName (String promotionName) {
-        if(promotionName.isEmpty()){
-            throw new IllegalArgumentException("[ERROR]프로모션 이름은 있어야합니다.");
-        }
+    /// 물품 구매개수 저장
+    private void setBuy(String[] promotionsInfo) {
+        this.buy = parseInt(promotionsInfo[INDEX_BUY].trim());
     }
 
-    private void setBuy (String[] promitionInfos) {
-        this.buy = parseInt(promitionInfos[INDEX_BUY].trim());
+    /// 물품 증정 정보 저장
+    private void setGet(String[] promotionsInfo) {
+        this.get = parseInt(promotionsInfo[INDEX_GET].trim());
     }
 
-    private void setGet (String[] promitionInfos) {
-        this.get = parseInt(promitionInfos[INDEX_GET].trim());
+
+    /// 프로모션 시작일 저장
+    private void setStartDate(String[] promotionsInfo) {
+        this.startDate = parseDate(promotionsInfo[INDEX_START_DATE].trim());
     }
 
+    /// 프로모션 마감일 저장
+    private void setEndDate(String[] promotionsInfo) {
+        this.endDate = parseDate(promotionsInfo[INDEX_END_DATE].trim());
+    }
+
+    /// 프로모션 활성화 여부 저장
+    /// 다른 사유로 활성화 여부가 바뀔 수 있으므로 public 제어자로 지정
+    public void setIsActivate(boolean isActivate) {
+        this.isActivate = isActivate;
+    }
+
+    public boolean getIsActivate() {
+        return this.isActivate;
+    }
 
     ///문자열을 숫자로 변환, 관련 예외처리
     private int parseInt(String intString) {
@@ -80,21 +99,6 @@ public class Promotion {
         }
 
         return Integer.parseInt(intString);
-    }
-
-    /// 프로모션 시작일 저장
-    private void setStartDate (String[] promitionInfos) {
-        this.startDate = parseDate(promitionInfos[INDEX_START_DATE].trim());
-    }
-
-    /// 프로모션 마감일 저장
-    private void setEndDate (String[] promitionInfos) {
-        this.endDate = parseDate(promitionInfos[INDEX_END_DATE].trim());
-    }
-
-    /// 프로모션 활성화 여부 저장
-    public void setIsActivate (boolean isActivate) {
-        this.isActivate = isActivate;
     }
 
     /// 문자열을 날짜로 분리
@@ -110,17 +114,10 @@ public class Promotion {
     }
 
     /// 오늘이 프로모션 기간에 해당하는지 여부
-    public boolean checkActivate (Date startDate, Date endDate) {
+    public boolean checkActivate(Date startDate, Date endDate) {
 
         Date today = new Date();
         return startDate.compareTo(today) <= 0 && endDate.compareTo(today) >= 0;
-
-    }
-
-
-    private void validateArrayLength(String[] processedDetails){
-        //Todo: 예외처리 기능 구현
-
 
     }
 
