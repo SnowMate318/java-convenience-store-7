@@ -15,6 +15,8 @@ public class Promotion {
 
     static final private int ARRAY_LENGTH = 5;
 
+
+
     static final private String ERROR_NOT_PARSE_PRODUCT_COUNT = "[ERROR] 물품 갯수 정보는 숫자로 되어있어야 합니다.";
     static final private String ERROR_NOT_PARSE_DATE = "[ERROR] 파일로부터 날짜 정보를 가져오지 못했습니다.";
 
@@ -53,17 +55,19 @@ public class Promotion {
     private void setPromotionName(String[] promotionsInfo) {
 
         this.promotionName = promotionsInfo[INDEX_PROMOTION_NAME].trim();
-        validator.validatePromotionName(this.promotionName); // 프로모션 이름 예외처리
+        validator.validateNameLength(this.promotionName); // 프로모션 이름 예외처리
     }
 
     /// 물품 구매개수 저장
     private void setBuy(String[] promotionsInfo) {
         this.buy = parser.parseInt(promotionsInfo[INDEX_BUY].trim(), ERROR_NOT_PARSE_PRODUCT_COUNT);
+        validator.validateBuy(this.buy);
     }
 
     /// 물품 증정 정보 저장
     private void setGet(String[] promotionsInfo) {
         this.get = parser.parseInt(promotionsInfo[INDEX_GET].trim(), ERROR_NOT_PARSE_PRODUCT_COUNT);
+        validator.validateGet(this.get);
     }
 
     /// 프로모션 시작일 저장

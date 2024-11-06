@@ -31,10 +31,13 @@ public class PromotionTest {
         void 프로모션_이름이_비어있으면_안된다() {
 
             String noPromotionName = "";
+            String tooLongPromotionName = "morethan50morethan50morethan50morethan50morethan51m";
 
-            assertThatThrownBy(()->promotionValidator.validatePromotionName(noPromotionName))
+            assertThatThrownBy(()->promotionValidator.validateNameLength(noPromotionName))
                     .isInstanceOf(IllegalArgumentException.class);
 
+            assertThatThrownBy(()->promotionValidator.validateNameLength(tooLongPromotionName))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -43,7 +46,6 @@ public class PromotionTest {
             String[] fourInfos = "MD추천상품,1,1,2024-01-01".split(",");
             String[] sixInfos = " ,1,1,2024-11-01,2024-12-31,wrong".split(",");
             int arrayLength = 5;
-
 
             assertThatThrownBy(() -> promotionValidator.validateArrayLength(fourInfos,arrayLength))
                     .isInstanceOf(IllegalArgumentException.class);
