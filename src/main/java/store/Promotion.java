@@ -45,6 +45,10 @@ public class Promotion {
         return this.promotionName;
     }
 
+    public boolean getIsActivate () {
+        return this.isActivate;
+    }
+
     private boolean checkActivate() {
         Date today = new Date();
         return startDate.compareTo(today) <= 0 && endDate.compareTo(today) >= 0;

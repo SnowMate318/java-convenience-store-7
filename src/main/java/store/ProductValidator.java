@@ -15,7 +15,6 @@ public class ProductValidator {
     static final private String ERROR_COUNT_IS_TO_LOW = "[ERROR] 0개 이상의 물품갯수를 입력해야 합니다.";
     static final private String ERROR_COUNT_IS_TO_HIGH = "[ERROR] 10000갸 이하의 물품갯수를 입력해야 합니다.";
 
-    static final private String ERROR_NOT_MATCH_ARRAY_LENGTH = "[ERROR] 올바르지 않은 배열 길이입니다.";
     static final private String ERROR_NOT_BLANK_NAME = "[ERROR] 상품 이름은 빈 칸이 될 수 없습니다.";
     static final private String ERROR_NAME_TOO_LONG = "[ERROR] 범위에서 벗어난 상품 이름 길이입니다.";
 
@@ -51,7 +50,7 @@ public class ProductValidator {
         if(current < minRange){ // 현재 값이 최소 범위보다 작으면 예외처리
             throw new IllegalArgumentException(errorMin);
         }
-        if(current < maxRange){ // 현재 값이 최대 범위보다 크면 예외처리
+        if(current > maxRange){ // 현재 값이 최대 범위보다 크면 예외처리
             throw new IllegalArgumentException(errorMax);
         }
     }

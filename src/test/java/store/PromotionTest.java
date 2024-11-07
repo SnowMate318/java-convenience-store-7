@@ -42,37 +42,14 @@ public class PromotionTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @Test
-        void 다섯_개의_정보가_쉼표로_구분되어야_한다() {
 
-            String[] fourInfos = "MD추천상품,1,1,2024-01-01".split(",");
-            String[] sixInfos = " MD추천상품,1,1,2024-11-01,2024-12-31,wrong".split(",");
-            int arrayLength = 5;
-
-            assertThatThrownBy(() -> promotionValidator.validateArrayLength(fourInfos,arrayLength))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-            assertThatThrownBy(() -> promotionValidator.validateArrayLength(sixInfos,arrayLength))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-        }
-
-        @Test
-        void 구매물품_갯수는_숫자로_되어있어야_한다() {
-
-            String wrongBuy = "MD추천상품,root,1,2024-01-01,2024-12-31";
-
-            assertThatThrownBy(() -> new Promotion(wrongBuy))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-        }
 
         @Test
         void 구매물품_갯수는_최소_1개_이상이여야_한다() {
 
-            String buyUnder0 = "MD추천상품,0,1,2024-01-01,2024-12-31";
+            int buyProductCount = 0;
 
-            assertThatThrownBy(() -> new Promotion(buyUnder0))
+            assertThatThrownBy(() -> promotionValidator.validateBuy(buyProductCount))
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
@@ -80,29 +57,21 @@ public class PromotionTest {
         @Test
         void 구매물품_갯수는_최대_100개_이하여야_한다() {
 
-            String buyOver100 = "MD추천상품,101,1,2024-01-01,2024-12-31";
+            int buyProductCount = 101;
 
-            assertThatThrownBy(() -> new Promotion(buyOver100))
+            assertThatThrownBy(() -> promotionValidator.validateBuy(buyProductCount))
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
 
-        @Test
-        void 증정물품_갯수는_숫자로_되어있어야_한다() {
 
-            String wrongGet = "MD추천상품,1,root,2024-01-01,2024-12-31";
-
-            assertThatThrownBy(() -> new Promotion(wrongGet))
-                    .isInstanceOf(IllegalArgumentException.class);
-
-        }
 
         @Test
         void 증정물품_갯수는_최소_1개_이상이여야_한다() {
 
-            String getUnder0 = "MD추천상품,1,0,2024-01-01,2024-12-31";
+            int getProductCount = 0;
 
-            assertThatThrownBy(() -> new Promotion(getUnder0))
+            assertThatThrownBy(() -> promotionValidator.validateGet(getProductCount))
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
@@ -110,32 +79,12 @@ public class PromotionTest {
         @Test
         void 증정물품_갯수는_최대_100개_이하여야_한다() {
 
-            String getOver100 = "MD추천상품,1,101,2024-01-01,2024-12-31";
+            int getProductCount = 101;
 
-            assertThatThrownBy(() -> new Promotion(getOver100))
+            assertThatThrownBy(() -> promotionValidator.validateGet(getProductCount))
                     .isInstanceOf(IllegalArgumentException.class);
 
         }
-
-
-        @Test
-        void 프로모션_시작일은_날짜로_되어있어야_한다() {
-
-            String wrongStartDate = "MD추천상품,1,1,root,2024-12-31";
-
-            assertThatThrownBy(() -> new Promotion(wrongStartDate))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
-        @Test
-        void 프로모션_마감일은_날짜로_되어있어야_한다() {
-
-            String wrongEndDate = "MD추천상품,1,1,2024-01-01,root";
-
-            assertThatThrownBy(() -> new Promotion(wrongEndDate))
-                    .isInstanceOf(IllegalArgumentException.class);
-        }
-
 
         @Test
         void 프로모션_시작일이_프로모션_마감일보다_늦을_수_없다() {
@@ -148,27 +97,37 @@ public class PromotionTest {
 
         }
 
-        /// 문자열을 날짜로 분리
-        private Date parseDate(String dateString) {
 
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-            try {
-                dateString = dateString.trim();
-                return formatter.parse(dateString);
-
-            } catch (ParseException e) {
-                throw new IllegalArgumentException(ERROR_NOT_PARSE_DATE);
-            }
-        }
     }
 
     @Test
     void 오늘을_기준으로_프로젝트_시작일과_마감일_사이에_있어야_활성화된다() {
 
-        String wrongStartDate = "MD추천상품,1,1,2024-01-01,2024-12-31";
+        Date startDate = parseDate("2024-01-01");
+        Date endDate = parseDate("2024-01-02"); // 현재 날짜보다 더 빠르게 설정
+        Promotion promotion = new Promotion("반짝프로모션",1,1,startDate,endDate);
 
+        assertThat(promotion.getIsActivate()).isEqualTo(false);
+
+        startDate = parseDate("2024-01-01");
+        endDate = parseDate("2025-12-31"); // 현재 날짜보다 더 늦게 설정
+        Promotion newPromotion = new Promotion("반짝프로모션",1,1,startDate,endDate);
+
+        assertThat(promotion.getIsActivate()).isEqualTo(false);
+        assertThat(newPromotion.getIsActivate()).isEqualTo(true);
     }
 
+    /// 문자열을 날짜로 분리
+    private Date parseDate(String dateString) {
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            dateString = dateString.trim();
+            return formatter.parse(dateString);
+
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(ERROR_NOT_PARSE_DATE);
+        }
+    }
 
 }

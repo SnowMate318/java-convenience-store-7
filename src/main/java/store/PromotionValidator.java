@@ -56,7 +56,7 @@ public class PromotionValidator {
         if(current < minRange){
             throw new IllegalArgumentException(errorMin);
         }
-        if(current < maxRange){
+        if(current > maxRange){
             throw new IllegalArgumentException(errorMax);
         }
 
