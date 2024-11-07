@@ -40,6 +40,9 @@ public class StoredData {
         }
     }
 
+
+
+
     private void setProducts(List<String> readProductFile){
 
         for(String readLine : readProductFile) {
@@ -72,5 +75,6 @@ public class StoredData {
                 .sorted(Comparator.comparing(product -> product.getPromotion() == null))
                 .collect(Collectors.toList()); // 이름에 해당하는 물품을 찾고, promotion이 널이 아닌것을 우선으로 찾음
     }
+
 
 }

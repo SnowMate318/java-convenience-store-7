@@ -61,7 +61,7 @@ public class Promotion {
         validator.validateNameLength(this.promotionName); // 프로모션 이름 예외처리
     }
 
-    private int getBuyProductCount() {
+    public int getBuyProductCount() {
         return this.productCountBuy;
     }
 
@@ -71,7 +71,7 @@ public class Promotion {
         validator.validateBuy(this.productCountBuy);
     }
 
-    private int getGetProductCount() {
+    public int getGetProductCount() {
         return this.productCountGet;
     }
 

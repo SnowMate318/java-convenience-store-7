@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Parser {
+
     ///문자열을 숫자로 변환, 관련 예외처리
     public int parseInt(String intString, String errorMessage) {
         //Todo: 예외처리 분리
