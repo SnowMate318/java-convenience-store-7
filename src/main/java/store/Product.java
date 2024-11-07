@@ -2,6 +2,8 @@ package store;
 
 public class Product {
 
+    static final private String NULL = "null";
+
     String productName;
     int productPrice;
     int productCount;
@@ -29,6 +31,17 @@ public class Product {
         this.productCount = productCount;
         this.productPrice = productPrice;
         this.promotion = promotion;
+    }
+
+    public String getProductName () {
+        return this.productName;
+    }
+
+    public String getPromotionName () {
+        if(this.productName == null) {
+            return NULL;
+        }
+        return this.productName;
     }
 
     private void validate(String productName, int productPrice, int productCount) {

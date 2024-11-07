@@ -1,14 +1,13 @@
 package store;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StoredData {
 
     List<Promotion> promotions = new ArrayList<>();
     List<Product> products = new ArrayList<>();
+    StoredDataValidator validator = new StoredDataValidator();
     private static StoredData instance; // 싱글톤 인스턴스
     Parser parser = new Parser();
 
@@ -36,7 +35,7 @@ public class StoredData {
         for(String readLine : readPromotionFile) {
             readLine = readLine.trim();
             Promotion promotion = parser.lineToPromotion(readLine);
-            //Todo: 프로모션 중복 예외처리
+            validator.validateDuplicatePromotion(promotion); // 프로모션 중복 예외처리
             promotions.add(promotion);
         }
     }
@@ -48,11 +47,8 @@ public class StoredData {
 
         for(String readLine : readProductFile) {
             readLine = readLine.trim();
-            Product product = new Product(readLine);
-            //Todo: 이미 프로모션이 적용된 상품인지 확인
-            //Todo: 기존 프로덕트 없으면 추가
-            //Todo: 기존 프로덕트가 하나면 해당 프로덕트의 프로모션 여부 확인 (null -> promotion만 가능), (promotion -> null만 가능)
-            //Todo: 기존 프로덕트가 두개면 추가 x
+            Product product = parser.lineToProduct(readLine);
+            validator.validateDuplicateProduct(product); // 재고 + 프로모션 중복 예외처리
             products.add(product);
         }
     }
@@ -71,10 +67,14 @@ public class StoredData {
 
     public List<Product> findByProductName(String productName) {
 
-        return products.stream()
-                .filter(product -> product.getProductName().equalsIgnoreCase(productName))
-                .sorted(Comparator.comparing(product -> product.getPromotion() == null))
-                .collect(Collectors.toList()); // 이름에 해당하는 물품을 찾고, promotion이 널이 아닌것을 우선으로 찾음
+        List<Product> findProducts = new ArrayList<>();
+
+        for(Product product : products) {
+            if(product.getProductName().equals(productName)) {
+                findProducts.add(product);
+            }
+        }
+        return findProducts;
     }
 
     public Product findByProductNameAndPromotionName(String productName, String promotionName) {
@@ -82,9 +82,11 @@ public class StoredData {
         List<Product> products = findByProductName(productName);
 
         for(Product product : products) {
-            if()
+            if(product.getProductName().equals(promotionName)) {
+                return product;
+            }
         }
-        // 이름에 해당하는 물품을 찾고, promotion이 널이 아닌것을 우선으로 찾음
+        return null;
     }
 
 
