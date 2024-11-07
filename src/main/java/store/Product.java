@@ -41,6 +41,10 @@ public class Product {
 
     }
 
+    public String getProductName() {
+        return this.productName;
+    }
+
     /// 싱픔이름 설정
     private void setProductName(String[] productsInfo) {
         this.productName = productsInfo[INDEX_PRODUCT_NAME].trim();
@@ -59,18 +63,21 @@ public class Product {
         validator.validateCount(this.productCount);
     }
 
+    public Promotion getPromotion (){
+        return this.promotion;
+    }
+
     ///프로모션 여부 설정
     private void setPromotion(String[] productsInfo) {
 
+        StoredData storedData = StoredData.getInstance(); // 저장된 데이터가 있는 객체를 불러옴
         String promotionName = productsInfo[INDEX_PROMOTION].trim();
 
         if (promotionName.equals(NULL_PROMOTION)) {
             return;
         }
-
-        // Todo: 예외처리
-        // Todo: 이름을 기준으로 프로모션 객체를 가져옴
-
+        this.promotion = storedData.findByPromotionName(promotionName);
     }
+
 
 }

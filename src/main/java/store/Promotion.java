@@ -16,13 +16,12 @@ public class Promotion {
     static final private int ARRAY_LENGTH = 5;
 
 
-
     static final private String ERROR_NOT_PARSE_PRODUCT_COUNT = "[ERROR] 물품 갯수 정보는 숫자로 되어있어야 합니다.";
     static final private String ERROR_NOT_PARSE_DATE = "[ERROR] 파일로부터 날짜 정보를 가져오지 못했습니다.";
 
     private String promotionName; // 프로모션 이름
-    private int buy; // 프로모션이 적용되는 구매물품 수
-    private int get; // 프로모션으로 얻을 수 있는 물품 수
+    private int productCountBuy; // 프로모션이 적용되는 구매물품 수
+    private int productCountGet; // 프로모션으로 얻을 수 있는 물품 수
     private Date startDate; // 프로모션이 시작되는 날짜
     private Date endDate; // 프로모션이 끝나는 날짜
     private boolean isActivate;
@@ -51,6 +50,10 @@ public class Promotion {
         setIsActivate(checkActivate(startDate, endDate));
     }
 
+    public String getPromotionName() {
+        return this.promotionName;
+    }
+
     /// 프로모션 이름 저장
     private void setPromotionName(String[] promotionsInfo) {
 
@@ -58,16 +61,24 @@ public class Promotion {
         validator.validateNameLength(this.promotionName); // 프로모션 이름 예외처리
     }
 
+    private int getBuyProductCount() {
+        return this.productCountBuy;
+    }
+
     /// 물품 구매개수 저장
     private void setBuy(String[] promotionsInfo) {
-        this.buy = parser.parseInt(promotionsInfo[INDEX_BUY].trim(), ERROR_NOT_PARSE_PRODUCT_COUNT);
-        validator.validateBuy(this.buy);
+        this.productCountBuy = parser.parseInt(promotionsInfo[INDEX_BUY].trim(), ERROR_NOT_PARSE_PRODUCT_COUNT);
+        validator.validateBuy(this.productCountBuy);
+    }
+
+    private int getGetProductCount() {
+        return this.productCountGet;
     }
 
     /// 물품 증정 정보 저장
     private void setGet(String[] promotionsInfo) {
-        this.get = parser.parseInt(promotionsInfo[INDEX_GET].trim(), ERROR_NOT_PARSE_PRODUCT_COUNT);
-        validator.validateGet(this.get);
+        this.productCountGet = parser.parseInt(promotionsInfo[INDEX_GET].trim(), ERROR_NOT_PARSE_PRODUCT_COUNT);
+        validator.validateGet(this.productCountGet);
     }
 
     /// 프로모션 시작일 저장
