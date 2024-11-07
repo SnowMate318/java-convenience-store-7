@@ -10,6 +10,7 @@ public class StoredData {
     List<Promotion> promotions = new ArrayList<>();
     List<Product> products = new ArrayList<>();
     private static StoredData instance; // 싱글톤 인스턴스
+    Parser parser = new Parser();
 
     StoredData() {
 
@@ -34,7 +35,7 @@ public class StoredData {
 
         for(String readLine : readPromotionFile) {
             readLine = readLine.trim();
-            Promotion promotion = new Promotion(readLine);
+            Promotion promotion = parser.lineToPromotion(readLine);
             //Todo: 프로모션 중복 예외처리
             promotions.add(promotion);
         }
@@ -75,6 +76,17 @@ public class StoredData {
                 .sorted(Comparator.comparing(product -> product.getPromotion() == null))
                 .collect(Collectors.toList()); // 이름에 해당하는 물품을 찾고, promotion이 널이 아닌것을 우선으로 찾음
     }
+
+    public Product findByProductNameAndPromotionName(String productName, String promotionName) {
+
+        List<Product> products = findByProductName(productName);
+
+        for(Product product : products) {
+            if()
+        }
+        // 이름에 해당하는 물품을 찾고, promotion이 널이 아닌것을 우선으로 찾음
+    }
+
 
 
 }

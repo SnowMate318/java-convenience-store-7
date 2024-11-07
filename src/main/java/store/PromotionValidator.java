@@ -17,19 +17,9 @@ public class PromotionValidator {
 
     static final private int PROMOTION_NAME_LANGTH_MAX = 50;
 
-    static final private String ERROR_NOT_MATCH_ARRAY_LENGTH = "[ERROR] 올바르지 않은 배열 길이입니다.";
     static final private String ERROR_NOT_BLANK_NAME = "[ERROR] 프로모션 이름은 빈 칸이 될 수 없습니다.";
     static final private String ERROR_NAME_TOO_LONG = "[ERROR] 범위에서 벗어난 프로모션 이름 길이입니다.";
     static final private String ERROR_WRONG_DATE = "[ERROR] 시작일이 마감일보다 앞설 수 없습니다.";
-
-    /// 배열 길이 예외처리
-    public void validateArrayLength(String[] processedDetails, int length){
-
-        if(processedDetails.length != length){
-            throw new IllegalArgumentException(ERROR_NOT_MATCH_ARRAY_LENGTH);
-        }
-
-    }
 
     /// 프로모션 이름 예외처리
     public void validateNameLength (String promotionName) {

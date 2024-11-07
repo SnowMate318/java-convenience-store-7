@@ -19,17 +19,8 @@ public class ProductValidator {
     static final private String ERROR_NOT_BLANK_NAME = "[ERROR] 상품 이름은 빈 칸이 될 수 없습니다.";
     static final private String ERROR_NAME_TOO_LONG = "[ERROR] 범위에서 벗어난 상품 이름 길이입니다.";
 
-    /// 배열 길이 예외처리
-    public void validateArrayLength(String[] processedDetails, int length){
-
-        if(processedDetails.length != length){
-            throw new IllegalArgumentException(ERROR_NOT_MATCH_ARRAY_LENGTH);
-        }
-
-    }
-
     /// 프로모션 이름 예외처리
-    public void validateNameLength (String promotionName) {
+    public void validateName (String promotionName) {
 
         if(promotionName.isEmpty()){
             throw new IllegalArgumentException(ERROR_NOT_BLANK_NAME);
