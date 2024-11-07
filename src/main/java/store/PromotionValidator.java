@@ -15,7 +15,7 @@ public class PromotionValidator {
     static final private String ERROR_GET_IS_TO_HIGH = "[ERROR] 100개 이하의 증정 물품 갯수를 입력해야 합니다.";
 
 
-    static final private int PROMOTION_NAME_LANGTH_MAX = 50;
+    static final private int PROMOTION_NAME_LENGTH_MAX = 50;
 
     static final private String ERROR_NOT_BLANK_NAME = "[ERROR] 프로모션 이름은 빈 칸이 될 수 없습니다.";
     static final private String ERROR_NAME_TOO_LONG = "[ERROR] 범위에서 벗어난 프로모션 이름 길이입니다.";
@@ -28,7 +28,7 @@ public class PromotionValidator {
             throw new IllegalArgumentException(ERROR_NOT_BLANK_NAME);
         }
 
-        if(promotionName.length() > PROMOTION_NAME_LANGTH_MAX){
+        if(promotionName.length() > PROMOTION_NAME_LENGTH_MAX){
             throw new IllegalArgumentException(ERROR_NAME_TOO_LONG);
         }
 
