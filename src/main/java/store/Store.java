@@ -17,7 +17,6 @@ public class Store {
     boolean isMembership = false;
     int price = 0;
     int membershipDiscount = 0;
-    int promotionDiscount = 0;
 
     Store(String storeName) {
         this.storeName = storeName;

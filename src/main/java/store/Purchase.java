@@ -34,6 +34,9 @@ public class Purchase {
         return this.price;
     }
 
+    public int getPromotionGet () {
+        return this.promotionGet;
+    }
 
 
 }
