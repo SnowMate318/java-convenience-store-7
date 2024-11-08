@@ -54,5 +54,35 @@ public class Promotion {
         return startDate.compareTo(today) <= 0 && endDate.compareTo(today) >= 0;
     }
 
+    public int checkGetMoreProduct(int quantity, int productCount) {
+
+        if(quantity % (this.productCountGet + this.productCountBuy) == this.productCountBuy) {
+
+            if((quantity + this.productCountGet) > productCount) {
+                return this.productCountGet;
+            }
+
+        }
+        return 0;
+    }
+
+    public boolean checkPromotion (int productCount) {
+
+        return productCount >= (this.productCountBuy + this.productCountGet) && this.isActivate;
+
+    }
+
+    public int getPromotionedProduct (int quantity) {
+
+        return quantity / (this.productCountBuy + this.productCountGet);
+
+    }
+
+    public int getNotPromotionedProduct (int quantity) {
+
+        return quantity % (this.productCountBuy + this.productCountGet);
+
+    }
+
 
 }

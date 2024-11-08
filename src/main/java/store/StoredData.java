@@ -11,6 +11,8 @@ public class StoredData {
     private static StoredData instance; // 싱글톤 인스턴스
     Parser parser = new Parser();
 
+    static final private String NULL = "null";
+
     StoredData() {
 
         FileLoader fileLoader = new FileLoader(); // 파일 입출력 관련 클래스를 가져옴
@@ -89,6 +91,28 @@ public class StoredData {
         return null;
     }
 
+    /// 프로모션 있는 프로덕트를 찾음
+    public Product findByProductOnPromotion (String productName) {
+        List<Product> products = findByProductName(productName);
 
+        for(Product product : products) {
+            if(!product.getProductName().equals(NULL)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    /// 프로모션 없는 프로덕트를 찾음
+    public Product findByProductNotOnPromotion (String productName) {
+        List<Product> products = findByProductName(productName);
+
+        for(Product product : products) {
+            if(product.getProductName().equals(NULL)) {
+                return product;
+            }
+        }
+        return null;
+    }
 
 }
