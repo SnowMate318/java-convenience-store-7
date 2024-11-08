@@ -4,17 +4,18 @@ public class Purchase {
 
     private String productName; //구매품목 이름
     private int quantity; //구매수량
+    private int promotionedQuantity; // 프로모션 적용된 구매수량
     private int price; // 구매가격
 
     private String promotionName; // 프로모션 이름
-    private Integer promotionGet; // 프로모션 증정상품 수
-    private Integer promotionDiscount; // 프로모션 할인금액
+    private int promotionGet = 0; // 프로모션 증정상품 수
+    private int promotionDiscount = 0; // 프로모션 할인금액
 
-
-    Purchase (String productName, int quantity, int price) {
+    Purchase (String productName, int quantity, int promotionedQuantity, int price) {
 
         this.promotionName = productName;
         this.quantity = quantity;
+        this.promotionedQuantity = promotionedQuantity;
         this.price = price;
 
     }
@@ -29,6 +30,9 @@ public class Purchase {
         return this.quantity;
     }
 
+    public int getPrice () {
+        return this.price;
+    }
 
 
 

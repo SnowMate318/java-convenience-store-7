@@ -58,38 +58,39 @@ public class Product {
 
     }
 
-    /// 프로모션 진행중인 상품 구매
-    public Purchase buyProductOnPromotion(int quantity) {
+    public Purchase buy ( int quantity) {
 
-        //Todo: 예외처리 프로모션이 있는지
-
-        if(getNotPromotionCount(quantity) > 0) {
-            //Todo: 사용자 안내
+        if(this.productName.equals(NULL)){
+            return buyProduct(quantity);
         }
 
-        Purchase purchaseData = buyProduct(quantity);
-        purchaseData.setPromotion(
-                promotion.getPromotionName(), promotion.getPromotionedProduct(quantity), getPrice(promotion.getPromotionedProduct(quantity)));
+        return buyOnPromotion(quantity);
+    }
+
+    /// 프로모션 진행중인 상품 구매
+     private Purchase buyOnPromotion(int quantity) {
+
+        //Todo: 예외처리 프로모션이 있는지
+        this.productCount -= quantity;
+        String promotionName = promotion.getPromotionName();
+        int promotionedCount = quantity - promotion.getNotPromotionedProduct(quantity);
+        int promotionGetCount = promotion.getPromotionedProduct(quantity);
+        int price = getPrice(quantity);
+        int discount = getPrice(promotion.getPromotionedProduct(quantity));
+
+        Purchase purchaseData = new Purchase(productName,quantity,promotionedCount,price);
+        purchaseData.setPromotion(promotionName, promotionGetCount, discount);
 
         return purchaseData;
     }
 
     /// 일반 상품 구매
-    public Purchase buyProduct(int quantity) {
+    private Purchase buyProduct(int quantity) {
 
-        int buyQuantity = Math.min(this.productCount, quantity);
-        this.productCount -= buyQuantity;
+        //예외처리: 프로덕트카운트가 양보다 더 많은지
+        this.productCount -= quantity;
 
-        return new Purchase(productName,quantity,getPrice(buyQuantity));
-
-    }
-
-
-    private int getNotPromotionCount (int quantity) {
-
-        int buyQuantity = Math.min(this.productCount, quantity);
-
-        return promotion.getNotPromotionedProduct(buyQuantity) + (quantity - buyQuantity);
+        return new Purchase(productName,quantity,0,getPrice(quantity));
 
     }
 
