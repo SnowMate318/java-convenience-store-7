@@ -2,7 +2,9 @@ package store;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Parser {
 
@@ -11,6 +13,12 @@ public class Parser {
 
     static final private String ERROR_NOT_PARSE_PRODUCT_COUNT = "[ERROR] 물품 갯수 정보는 숫자로 되어있어야 합니다.";
     static final private String ERROR_NOT_PARSE_DATE = "[ERROR] 파일로부터 날짜 정보를 가져오지 못했습니다.";
+
+    static final private String ERROR_INPUT_INVALID_FORM = "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.";
+    static final private String ERROR_INPUT_PRODUCT_NOT_FOUND = "[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.";
+    static final private String ERROR_INPUT_TOO_MANY_PRODUCT_COUNT = "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.";
+    static final private String ERROR_INPUT_INVALID_INPUT = "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.";
+
 
     ParserValidator validator = new ParserValidator();
 
@@ -57,6 +65,31 @@ public class Parser {
 
         return new Promotion(promotionName, productCountBuy, productCountGet, startDate, endDate);
 
+    }
+
+    public List<BuyProduct> lineToBuyProducts(String line) {
+
+        String[] promotionsInfo = line.split(",");
+
+        for(String promotionInfo : promotionsInfo) {
+            promotionInfo = promotionInfo.trim();
+            promotionInfo = promotionInfo.substring(1,promotionInfo.length()-1);
+
+        }
+        return getBuyProduct(promotionsInfo);
+    }
+
+    private List<BuyProduct> getBuyProduct (String[] promotionsInfo) {
+
+        List<BuyProduct> buyProducts = new ArrayList<>();
+
+        for (String promotionInfo : promotionsInfo) {
+            String[] parseData = promotionInfo.split("-");
+            //Todo: parseData 예외처리
+            BuyProduct buyProduct = new BuyProduct(parseData[0], parseInt(parseData[1], ERROR_INPUT_INVALID_FORM));  //Todo: 문서화
+        }
+
+        return buyProducts;
     }
 
     ///문자열을 숫자로 변환, 관련 예외처리
