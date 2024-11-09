@@ -15,10 +15,9 @@ public class Parser {
     static final private String ERROR_NOT_PARSE_DATE = "[ERROR] 파일로부터 날짜 정보를 가져오지 못했습니다.";
 
     static final private String ERROR_INPUT_INVALID_FORM = "[ERROR] 올바르지 않은 형식으로 입력했습니다. 다시 입력해 주세요.";
-    static final private String ERROR_INPUT_PRODUCT_NOT_FOUND = "[ERROR] 존재하지 않는 상품입니다. 다시 입력해 주세요.";
-    static final private String ERROR_INPUT_TOO_MANY_PRODUCT_COUNT = "[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.";
-    static final private String ERROR_INPUT_INVALID_INPUT = "[ERROR] 잘못된 입력입니다. 다시 입력해 주세요.";
 
+    static final private String YES = "Y";
+    static final private String NO = "N";
 
     ParserValidator validator = new ParserValidator();
 
@@ -50,7 +49,7 @@ public class Parser {
     private Promotion findPromotion(String promotionName) {
 
         StoredData storedData = StoredData.getInstance();
-        return storedData.findByPromotionName(promotionName); // Todo; 예외처리
+        return storedData.findByPromotionName(promotionName);
 
     }
 
@@ -85,8 +84,9 @@ public class Parser {
 
         for (String promotionInfo : promotionsInfo) {
             String[] parseData = promotionInfo.split("-");
-            //Todo: parseData 예외처리
-            BuyProduct buyProduct = new BuyProduct(parseData[0], parseInt(parseData[1], ERROR_INPUT_INVALID_FORM));  //Todo: 문서화
+            validator.validateBuyProductParseData(parseData);
+            buyProducts.add(new BuyProduct(parseData[0], parseInt(parseData[1], ERROR_INPUT_INVALID_FORM)));
+
         }
 
         return buyProducts;
@@ -94,7 +94,6 @@ public class Parser {
 
     ///문자열을 숫자로 변환, 관련 예외처리
     public int parseInt(String intString, String errorMessage) {
-        //Todo: 예외처리 분리
         try {
             intString = intString.trim();
             Integer.parseInt(intString);
@@ -116,6 +115,13 @@ public class Parser {
         } catch (ParseException e) {
             throw new IllegalArgumentException(errorMessage);
         }
+    }
+
+    public boolean parseBoolean(String answerInput) {
+
+        validator.validateAnswer(answerInput);
+        return answerInput.equals(YES);
+
     }
 
 }

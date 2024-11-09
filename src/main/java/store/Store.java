@@ -9,9 +9,11 @@ public class Store {
     static final private double MEMBERSHIP_RATE = 0.3;
     static final private int MAX_MEMBERSHIP_DISCOUNT = 8000;
 
+    StoreValidator validator = new StoreValidator();
 
     StoredData storedData = StoredData.getInstance();
     List<Purchase> purchases = new ArrayList<>();
+    InputView inputView = new InputView();
     String storeName = "";
 
     boolean isMembership = false;
@@ -22,9 +24,19 @@ public class Store {
         this.storeName = storeName;
     }
 
+    public void purchase () {
+        List<BuyProduct> buyProducts = inputView.inputPurchase();
+
+        for (BuyProduct buyProduct : buyProducts) {
+            purchaseProduct(buyProduct.getProductName(), buyProduct.getQuantity());
+        }
+
+    }
+
     public void purchaseProduct (String productName, int quantity) {
 
-        //Todo: 예외처리 구매할 양이 많으면 안됨
+        validator.validateProductExist(productName); // 구매물품에 대한 예외처리
+        validator.validateBuyProductCount(productName, quantity); // 구매수량에 대한 예외처리
         Product productOnPromotion = storedData.findByProductOnPromotion(productName);
         int remains = purchaseOnPromotion(productOnPromotion, quantity);  // 프로모션 중인 상품을 구매
 
@@ -93,9 +105,9 @@ public class Store {
     private int checkGetPromotionProduct(Product productOnPromotion, Promotion promotion, int quantity) {
 
         if (promotion.checkPromotion(quantity)) { // 프로모션을 제공받을 수 있는 상태면
-
-            if (promotion.checkGetMoreProduct(quantity, productOnPromotion.getProductCount()) != 0) {
-                if (true) { // Todo: Y를 입력하면 증정물품 받음
+            int promotionGet = promotion.checkGetMoreProduct(quantity, productOnPromotion.getProductCount());
+            if (promotionGet != 0) {
+                if (inputView.inputPromotionGet(productOnPromotion.getProductName(), promotionGet)) { // 더 받을 수 있는 물품 안내: Y를 입력하면 증정물품 받음
                     quantity += promotion.checkGetMoreProduct(quantity, productOnPromotion.getProductCount());
                 }
             }

@@ -6,12 +6,12 @@ public class Product {
 
     static final private String NULL = "null";
 
-    String productName;
-    int productPrice;
-    int productCount;
-    Promotion promotion;
+    private String productName;
+    private int productPrice;
+    private int productCount;
+    private Promotion promotion;
 
-    ProductValidator validator = new ProductValidator();
+    private ProductValidator validator = new ProductValidator();
 
     ///프로모션이 있는 상품일 경우
     Product(String productName, int productPrice, int productCount) {

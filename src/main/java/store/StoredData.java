@@ -115,4 +115,14 @@ public class StoredData {
         return null;
     }
 
+    /// 상품 이름에 대한 재고 구하기
+    public int getAllProductCount (String productName) {
+        int sum = 0;
+
+        for (Product product : findByProductName(productName)) {
+            sum += product.getProductCount();
+        }
+
+        return sum;
+    }
 }
