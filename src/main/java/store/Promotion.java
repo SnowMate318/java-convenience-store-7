@@ -56,9 +56,10 @@ public class Promotion {
 
     public int checkGetMoreProduct(int quantity, int productCount) {
 
+        quantity = Math.min(quantity, productCount);
         if(quantity % (this.productCountGet + this.productCountBuy) == this.productCountBuy) {
 
-            if((quantity + this.productCountGet) > productCount) {
+            if((quantity + this.productCountGet) <= productCount) {
                 return this.productCountGet;
             }
 

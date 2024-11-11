@@ -6,12 +6,12 @@ public class Product {
 
     static final private String NULL = "null";
 
-    private String productName;
-    private int productPrice;
+    private final String productName;
+    private final int productPrice;
     private int productCount;
     private Promotion promotion;
 
-    private ProductValidator validator = new ProductValidator();
+    private final ProductValidator validator = new ProductValidator();
 
     ///프로모션이 있는 상품일 경우
     Product(String productName, int productPrice, int productCount) {
@@ -40,14 +40,26 @@ public class Product {
     }
 
     public int getProductCount () {
-        return this.productPrice;
+        return this.productCount;
+    }
+
+    public int getProductPrice () {
+        return  this.productPrice;
     }
 
     public String getPromotionName() {
-        if (this.productName == null) {
+        if (this.promotion == null) {
             return NULL;
         }
-        return this.productName;
+        return this.promotion.getPromotionName();
+    }
+
+    public boolean equals(Product product) {
+        return product.getProductName().equals(this.productName) && product.getPromotionName().equals(this.getPromotionName());
+    }
+
+    public void addProductCount(int count) {
+        this.productCount += count;
     }
 
     private void validate(String productName, int productPrice, int productCount) {
@@ -60,7 +72,7 @@ public class Product {
 
     public Purchase buy ( int quantity) {
 
-        if(this.productName.equals(NULL)){
+        if(this.getPromotionName().equals(NULL) || this.promotion.getIsActivate()){
             return buyProduct(quantity);
         }
 
@@ -75,8 +87,8 @@ public class Product {
         String promotionName = promotion.getPromotionName();
         int promotionedCount = quantity - promotion.getNotPromotionedProduct(quantity);
         int promotionGetCount = promotion.getPromotionedProduct(quantity);
-        int price = getPrice(quantity);
-        int discount = getPrice(promotion.getPromotionedProduct(quantity));
+        int price = calculatePrice(quantity);
+        int discount = calculatePrice(promotion.getPromotionedProduct(quantity));
 
         Purchase purchaseData = new Purchase(productName,quantity,promotionedCount,price);
         purchaseData.setPromotion(promotionName, promotionGetCount, discount);
@@ -90,12 +102,12 @@ public class Product {
         //예외처리: 프로덕트카운트가 양보다 더 많은지
         this.productCount -= quantity;
 
-        return new Purchase(productName,quantity,0,getPrice(quantity));
+        return new Purchase(productName,quantity,0,calculatePrice(quantity));
 
     }
 
 
-    private int getPrice(int quantity) {
+    private int calculatePrice(int quantity) {
         return quantity * this.productPrice;
     }
 

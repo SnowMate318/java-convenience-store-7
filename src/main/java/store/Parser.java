@@ -3,6 +3,7 @@ package store;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,6 @@ public class Parser {
         int price = parseInt(productInfo[ProductIndex.PRICE.getIndex()], ERROR_NOT_PARSE_PRICE);
         int count = parseInt(productInfo[ProductIndex.COUNT.getIndex()], ERROR_NOT_PARSE_COUNT);
         String promotionName = productInfo[ProductIndex.PROMOTION.getIndex()];
-
         return getProduct(productName, price, count, promotionName);
     }
 
@@ -48,12 +48,12 @@ public class Parser {
 
     private Promotion findPromotion(String promotionName) {
 
-        StoredData storedData = StoredData.getInstance();
-        return storedData.findByPromotionName(promotionName);
+        StoredPromotions storedPromotions = StoredPromotions.getInstance();
+        return storedPromotions.findByPromotionName(promotionName);
 
     }
 
-    public Promotion lineToPromotion(String line) {
+    public Promotion  lineToPromotion(String line) {
 
         String[] promotionInfo = line.split(",");
         String promotionName = promotionInfo[PromotionIndex.PROMOTION_NAME.getIndex()];
@@ -70,10 +70,9 @@ public class Parser {
 
         String[] promotionsInfo = line.split(",");
 
-        for(String promotionInfo : promotionsInfo) {
-            promotionInfo = promotionInfo.trim();
-            promotionInfo = promotionInfo.substring(1,promotionInfo.length()-1);
-
+        for (int i = 0; i < promotionsInfo.length; i++) {
+            promotionsInfo[i] = promotionsInfo[i].trim();
+            promotionsInfo[i] = promotionsInfo[i].substring(1, promotionsInfo[i].length() - 1);
         }
         return getBuyProduct(promotionsInfo);
     }
@@ -86,9 +85,7 @@ public class Parser {
             String[] parseData = promotionInfo.split("-");
             validator.validateBuyProductParseData(parseData);
             buyProducts.add(new BuyProduct(parseData[0], parseInt(parseData[1], ERROR_INPUT_INVALID_FORM)));
-
         }
-
         return buyProducts;
     }
 

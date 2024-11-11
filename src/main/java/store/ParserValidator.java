@@ -38,6 +38,7 @@ public class ParserValidator {
 
         if(promotion == null) {
             throw new IllegalStateException(ERROR_NULL_PROMOTION);
+
         }
 
     }

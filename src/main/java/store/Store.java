@@ -6,26 +6,32 @@ import java.util.List;
 public class Store {
 
     static final private String NULL = "null";
-    static final private double MEMBERSHIP_RATE = 0.3;
-    static final private int MAX_MEMBERSHIP_DISCOUNT = 8000;
 
-    StoreValidator validator = new StoreValidator();
-
-    StoredData storedData = StoredData.getInstance();
+    private final StoredProducts storedProducts;
+    private final StoredPromotions storedPromotions = StoredPromotions.getInstance();
+    private final StoreValidator validator;
     List<Purchase> purchases = new ArrayList<>();
     InputView inputView = new InputView();
     String storeName = "";
 
-    boolean isMembership = false;
-    int price = 0;
-    int membershipDiscount = 0;
+    private boolean isMembership = false;
+    private int price = 0;
 
-    Store(String storeName) {
+    Store(String storeName, StoredProducts storedProducts) {
         this.storeName = storeName;
+        this.storedProducts = storedProducts;
+        this.validator = new StoreValidator(storedProducts);
     }
 
-    public void purchase () {
-        List<BuyProduct> buyProducts = inputView.inputPurchase();
+    public String getStoreName() {
+        return storeName;
+    }
+
+    public void setIsMembership(boolean result) {
+        this.isMembership = result;
+    }
+
+    public void purchase(List<BuyProduct> buyProducts) {
 
         for (BuyProduct buyProduct : buyProducts) {
             purchaseProduct(buyProduct.getProductName(), buyProduct.getQuantity());
@@ -33,17 +39,31 @@ public class Store {
 
     }
 
-    public void purchaseProduct (String productName, int quantity) {
+    public void purchaseProduct(String productName, int quantity) {
 
         validator.validateProductExist(productName); // 구매물품에 대한 예외처리
         validator.validateBuyProductCount(productName, quantity); // 구매수량에 대한 예외처리
-        Product productOnPromotion = storedData.findByProductOnPromotion(productName);
-        int remains = purchaseOnPromotion(productOnPromotion, quantity);  // 프로모션 중인 상품을 구매
+        Product productOnPromotion = storedProducts.findByProductOnPromotion(productName);
 
-        purchaseOnCommon(productName, remains);
+        if (checkNotPromotion(productOnPromotion, quantity)) {
+            int remains = purchaseOnPromotion(productOnPromotion, quantity);  // 프로모션 중인 상품을 구매
+
+            purchaseOnCommon(productName, remains);
+        }
     }
 
-    private int purchaseOnPromotion (Product productOnPromotion, int quantity) {
+    private boolean checkNotPromotion(Product productOnPromotion, int quantity) {
+
+        int remains = quantity - productOnPromotion.getProductCount();
+
+        if (remains > 0) {
+            return inputView.inputGuideNotPromotion(productOnPromotion.getProductName(), remains);
+        }
+
+        return true;
+    }
+
+    private int purchaseOnPromotion(Product productOnPromotion, int quantity) {
 
         int buyQuantity = 0;
 
@@ -56,63 +76,56 @@ public class Store {
         return getRemains(quantity, buyQuantity);
     }
 
-    private void purchaseOnCommon (String productName,int quantity) {
+    private void purchaseOnCommon(String productName, int quantity) {
 
         if (quantity > 0) {
 
-            Product product = storedData.findByProductNotOnPromotion(productName);
-            Purchase result = product.buy(quantity);
-
-            purchases.add(result);
-
+            Product product = storedProducts.findByProductNotOnPromotion(productName);
+            if (product != null) {
+                Purchase result = product.buy(quantity);
+                purchases.add(result);
+            }
         }
-
     }
 
-    private int getRemains (int quantity, int buyQuantity) {
+    private int getRemains(int quantity, int buyQuantity) {
 
         return quantity - buyQuantity;
     }
 
-    private void purchase (int buyQuantity, Product productOnPromotion) {
+    private void purchase(int buyQuantity, Product productOnPromotion) {
 
         Purchase result = productOnPromotion.buy(buyQuantity);
         price += result.getPrice();
-        if(isMembership) {
-            discountByMembership(price);
-        }
         purchases.add(result);
 
     }
 
-    private void discountByMembership(int price) {
-
-        membershipDiscount += (int) (price * MEMBERSHIP_RATE);
-
-        if(membershipDiscount >= MAX_MEMBERSHIP_DISCOUNT) {
-            membershipDiscount = MAX_MEMBERSHIP_DISCOUNT;
-        }
-
-    }
 
     private Promotion getPromotion(Product product) {
 
         String promotionName = product.getPromotionName();
-        return  storedData.findByPromotionName(promotionName);
+        return storedPromotions.findByPromotionName(promotionName);
 
     }
 
     private int checkGetPromotionProduct(Product productOnPromotion, Promotion promotion, int quantity) {
 
-        if (promotion.checkPromotion(quantity)) { // 프로모션을 제공받을 수 있는 상태면
+        if (promotion != null && promotion.checkPromotion(productOnPromotion.getProductCount())) { // 프로모션을 제공받을 수 있는 상태면
             int promotionGet = promotion.checkGetMoreProduct(quantity, productOnPromotion.getProductCount());
+
             if (promotionGet != 0) {
+
                 if (inputView.inputPromotionGet(productOnPromotion.getProductName(), promotionGet)) { // 더 받을 수 있는 물품 안내: Y를 입력하면 증정물품 받음
                     quantity += promotion.checkGetMoreProduct(quantity, productOnPromotion.getProductCount());
                 }
             }
         }
         return quantity;
+    }
+
+    public Receipt getReceipt() {
+        return new Receipt(storeName, purchases, isMembership);
     }
 
 }
